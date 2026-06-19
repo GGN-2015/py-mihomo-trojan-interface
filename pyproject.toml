@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "py-mihomo-trojan-interface"
+version = "0.1.0"
+description = "Launch mihomo with an administrator-elevated Trojan config generated from a share URL."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [
+  { name = "GGN_2015" },
+]
+keywords = ["mihomo", "clash", "trojan", "proxy", "administrator"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Internet :: Proxy Servers",
+  "Topic :: System :: Systems Administration",
+]
+dependencies = [
+  "py-admin-launch>=0.1.3",
+]
+
+[project.scripts]
+mihomo-trojan = "mihomo_trojan_interface.cli:main"
+py-mihomo-trojan-interface = "mihomo_trojan_interface.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mihomo_trojan_interface"]
