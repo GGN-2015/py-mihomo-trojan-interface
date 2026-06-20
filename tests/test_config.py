@@ -43,6 +43,8 @@ class TrojanConfigTests(unittest.TestCase):
         self.assertIn("server: 203.0.113.10", content)
         self.assertIn('password: "password"', content)
         self.assertIn('sni: "edge.example.com"', content)
+        self.assertIn("  - DOMAIN-SUFFIX,qpic.cn,DIRECT", content)
+        self.assertIn("  - DOMAIN-SUFFIX,tencent.com,DIRECT", content)
         self.assertIn("  - IP-CIDR,203.0.113.10/32,DIRECT,no-resolve", content)
 
 

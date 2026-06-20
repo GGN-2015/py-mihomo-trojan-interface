@@ -30,6 +30,17 @@ DEFAULT_GOOGLE_RULES = [
 ]
 
 
+DEFAULT_DIRECT_DOMAIN_SUFFIX_RULES = [
+    "DOMAIN-SUFFIX,ftn.qq.com,DIRECT",
+    "DOMAIN-SUFFIX,qpic.cn,DIRECT",
+    "DOMAIN-SUFFIX,up.qq.com,DIRECT",
+    "DOMAIN-SUFFIX,filetrans.qq.com,DIRECT",
+    "DOMAIN-SUFFIX,p.iqun.qq.com,DIRECT",
+    "DOMAIN-SUFFIX,yzf.qq.com,DIRECT",
+    "DOMAIN-SUFFIX,tencent.com,DIRECT",
+]
+
+
 @dataclass(frozen=True)
 class TrojanLink:
     name: str
@@ -441,6 +452,7 @@ def build_yaml(
         lines.append(f"  - IP-CIDR,{ip}/32,DIRECT,no-resolve")
 
     lines.extend(f"  - {rule}" for rule in DEFAULT_GOOGLE_RULES)
+    lines.extend(f"  - {rule}" for rule in DEFAULT_DIRECT_DOMAIN_SUFFIX_RULES)
     lines.extend(
         [
             "  - DOMAIN-SUFFIX,local,DIRECT",

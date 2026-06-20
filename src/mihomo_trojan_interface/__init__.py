@@ -1,3 +1,3 @@
 """Command line helpers for launching mihomo with a generated Trojan config."""
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"
