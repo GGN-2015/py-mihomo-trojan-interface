@@ -354,6 +354,7 @@ def build_yaml(
             "  enable: true",
             "  listen: 0.0.0.0:1053",
             "  ipv6: false",
+            "  respect-rules: true",
             "  enhanced-mode: redir-host",
             "  use-hosts: true",
             "  use-system-hosts: true",
