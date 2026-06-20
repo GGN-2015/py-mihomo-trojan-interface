@@ -44,6 +44,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--data-dir", help="mihomo data directory passed to mihomo with -d")
     parser.add_argument("--mixed-port", type=int, default=7890, help="mihomo mixed proxy port")
     parser.add_argument("--controller", default="127.0.0.1:9090", help="external-controller address")
+    parser.add_argument(
+        "--log",
+        default="error",
+        choices=["debug", "info", "warning", "error", "silent"],
+        help="mihomo log level written to the generated config",
+    )
     parser.add_argument("--no-tun", action="store_true", help="disable TUN in generated config")
     parser.add_argument(
         "--keep-server-domain",
@@ -202,6 +208,7 @@ def child_argv_from_args(args: argparse.Namespace, trojan_url_file: Path) -> lis
         child.extend(["--data-dir", args.data_dir])
     child.extend(["--mixed-port", str(args.mixed_port)])
     child.extend(["--controller", args.controller])
+    child.extend(["--log", args.log])
     if args.no_tun:
         child.append("--no-tun")
     if args.keep_server_domain:
@@ -290,6 +297,7 @@ def run(args: argparse.Namespace, trojan_url: str) -> int:
         trojan_url,
         mixed_port=args.mixed_port,
         controller=args.controller,
+        log_level=args.log,
         enable_tun=not args.no_tun,
         keep_server_domain=args.keep_server_domain,
         server_ips=args.server_ip,

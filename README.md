@@ -55,5 +55,5 @@ Useful options:
 
 ```bash
 mihomo-trojan --help
-mihomo-trojan --dry-run --mihomo /path/to/mihomo --country-mmdb /path/to/Country.mmdb --trojan-url-env MIHOMO_TROJAN_URL
+mihomo-trojan --dry-run --log debug --mihomo /path/to/mihomo --country-mmdb /path/to/Country.mmdb --trojan-url-env MIHOMO_TROJAN_URL
 ```

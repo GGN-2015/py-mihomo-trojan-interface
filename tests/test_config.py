@@ -25,6 +25,7 @@ class TrojanConfigTests(unittest.TestCase):
             node,
             mixed_port=7890,
             controller="127.0.0.1:9090",
+            log_level="debug",
             enable_tun=True,
             server_ips=["203.0.113.10"],
             connect_ip="203.0.113.10",
@@ -35,6 +36,7 @@ class TrojanConfigTests(unittest.TestCase):
         )
 
         self.assertIn("mixed-port: 7890", content)
+        self.assertIn("log-level: debug", content)
         self.assertIn("type: trojan", content)
         self.assertIn("server: 203.0.113.10", content)
         self.assertIn('password: "password"', content)
