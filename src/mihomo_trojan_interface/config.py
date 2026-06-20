@@ -358,6 +358,11 @@ def build_yaml(
             "  enhanced-mode: redir-host",
             "  use-hosts: true",
             "  use-system-hosts: true",
+            "  proxy-server-nameserver:",
+            "    - 223.5.5.5",
+            "    - 119.29.29.29",
+            "    - https://dns.alidns.com/dns-query",
+            "    - https://doh.pub/dns-query",
         ]
     )
 

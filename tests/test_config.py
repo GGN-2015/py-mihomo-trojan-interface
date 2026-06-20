@@ -38,6 +38,7 @@ class TrojanConfigTests(unittest.TestCase):
         self.assertIn("mixed-port: 7890", content)
         self.assertIn("log-level: debug", content)
         self.assertIn("  respect-rules: true", content)
+        self.assertIn("  proxy-server-nameserver:", content)
         self.assertIn("type: trojan", content)
         self.assertIn("server: 203.0.113.10", content)
         self.assertIn('password: "password"', content)
