@@ -47,6 +47,10 @@ with `-f`. If `--data-dir` is not provided and the mmdb file is named
 `Country.mmdb`, the file's parent directory is used as the mihomo data
 directory.
 
+On Linux and macOS, the launcher automatically marks the mihomo binary as
+executable before starting it, equivalent to running `chmod +x` on the path
+provided with `--mihomo`.
+
 Useful options:
 
 ```bash

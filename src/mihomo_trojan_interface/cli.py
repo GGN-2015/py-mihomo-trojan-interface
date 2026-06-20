@@ -130,13 +130,28 @@ def write_secret_temp_file(secret: str) -> Path:
 
 def resolve_executable(value: str) -> Path:
     candidate = Path(value).expanduser()
-    if candidate.exists():
+    if candidate.is_file():
         return candidate.resolve()
+    if candidate.exists():
+        raise FileNotFoundError(f"mihomo executable path is not a file: {value}")
 
     resolved = shutil.which(value)
     if resolved:
         return Path(resolved).resolve()
     raise FileNotFoundError(f"mihomo executable not found: {value}")
+
+
+def ensure_executable_file(path: Path) -> bool:
+    if os.name == "nt":
+        return False
+
+    mode = path.stat().st_mode
+    executable_mode = mode | 0o111
+    if executable_mode == mode:
+        return False
+
+    path.chmod(executable_mode)
+    return True
 
 
 def resolve_existing_file(value: str, label: str) -> Path:
@@ -252,6 +267,8 @@ def run_mihomo(command: list[str], cwd: Path, no_wait: bool) -> int:
 
 def run(args: argparse.Namespace, trojan_url: str) -> int:
     mihomo = resolve_executable(args.mihomo)
+    if ensure_executable_file(mihomo):
+        print(f"Marked mihomo executable with chmod +x: {mihomo}")
     country_mmdb = resolve_existing_file(args.country_mmdb, "Country.mmdb")
 
     if not args.allow_running:
