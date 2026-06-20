@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "py-mihomo-trojan-interface"
-version = "0.1.5"
+version = "0.1.6"
 description = "Launch mihomo with an administrator-elevated Trojan config generated from a share URL."
 readme = "README.md"
 requires-python = ">=3.9"
