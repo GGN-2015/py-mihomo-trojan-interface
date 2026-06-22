@@ -64,6 +64,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--interface-name", default="", help="physical outbound interface name")
     parser.add_argument("--node-name", default="", help="override proxy node name")
     parser.add_argument("--host-alias", action="append", default=[], help="additional CNAME/host to pin; repeatable")
+    parser.add_argument(
+        "--direct-host",
+        action="append",
+        default=[],
+        metavar="HOST_OR_IPV4",
+        help="force this IPv4 address or domain suffix to DIRECT; repeatable",
+    )
     parser.add_argument("--allow-running", action="store_true", help="continue even when another mihomo process is found")
     parser.add_argument("--no-flush-dns", action="store_true", help="skip ipconfig /flushdns on Windows")
     parser.add_argument("--mihomo-arg", action="append", default=[], help="extra argument passed to mihomo; repeatable")
@@ -227,6 +234,8 @@ def child_argv_from_args(args: argparse.Namespace, trojan_url_file: Path) -> lis
         child.extend(["--node-name", args.node_name])
     for value in args.host_alias:
         child.extend(["--host-alias", value])
+    for value in args.direct_host:
+        child.extend(["--direct-host", value])
     if args.allow_running:
         child.append("--allow-running")
     if args.no_flush_dns:
@@ -308,6 +317,7 @@ def run(args: argparse.Namespace, trojan_url: str) -> int:
         interface_name=args.interface_name,
         node_name=args.node_name,
         host_aliases=args.host_alias,
+        direct_hosts=args.direct_host,
     )
     write_config(config_path, generated.content)
 

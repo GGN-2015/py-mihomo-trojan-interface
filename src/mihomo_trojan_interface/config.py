@@ -111,6 +111,17 @@ def is_ip_address(host: str) -> bool:
         return False
 
 
+def normalize_direct_host(value: str) -> str:
+    host = value.strip().strip('"').strip("'").rstrip(".")
+    if host.startswith("*."):
+        host = host[2:]
+    elif host.startswith("."):
+        host = host[1:]
+    if not host:
+        raise ValueError("direct host must not be empty")
+    return host.lower()
+
+
 def _ipv4_from_getaddrinfo(host: str) -> list[str]:
     try:
         infos = socket.getaddrinfo(host, None, socket.AF_INET, socket.SOCK_STREAM)
@@ -297,6 +308,7 @@ def build_yaml(
     interface_name: str,
     node_name: str,
     host_aliases: list[str],
+    direct_hosts: list[str],
 ) -> str:
     pinned_ips = unique_preserve_order([*server_ips, connect_ip])
     server = connect_ip or (server_ips[0] if server_ips else node.host)
@@ -440,6 +452,13 @@ def build_yaml(
     for ip in pinned_ips:
         lines.append(f"  - IP-CIDR,{ip}/32,DIRECT,no-resolve")
 
+    for direct_host in unique_preserve_order(normalize_direct_host(value) for value in direct_hosts):
+        if is_ip_address(direct_host):
+            if "." in direct_host:
+                lines.append(f"  - IP-CIDR,{direct_host}/32,DIRECT,no-resolve")
+        else:
+            lines.append(f"  - DOMAIN-SUFFIX,{direct_host},DIRECT")
+
     lines.extend(f"  - {rule}" for rule in DEFAULT_GOOGLE_RULES)
     lines.extend(
         [
@@ -474,6 +493,7 @@ def generate_config(
     interface_name: str,
     node_name: str,
     host_aliases: list[str],
+    direct_hosts: list[str],
 ) -> ResolvedTrojanConfig:
     node = parse_trojan_link(link)
     auto_host_aliases = (
@@ -497,6 +517,7 @@ def generate_config(
         interface_name=interface_name,
         node_name=node_name,
         host_aliases=all_host_aliases,
+        direct_hosts=direct_hosts,
     )
 
     return ResolvedTrojanConfig(
