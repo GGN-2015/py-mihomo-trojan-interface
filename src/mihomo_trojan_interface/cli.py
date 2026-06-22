@@ -71,6 +71,16 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="HOST_OR_IPV4",
         help="force this IPv4 address or domain suffix to DIRECT; repeatable",
     )
+    parser.add_argument(
+        "--exlude-dst-port",
+        "--exclude-dst-port",
+        action="append",
+        default=[],
+        dest="exclude_dst_port",
+        metavar="PORT",
+        type=int,
+        help="force traffic whose destination port matches this port to DIRECT; repeatable",
+    )
     parser.add_argument("--allow-running", action="store_true", help="continue even when another mihomo process is found")
     parser.add_argument("--no-flush-dns", action="store_true", help="skip ipconfig /flushdns on Windows")
     parser.add_argument("--mihomo-arg", action="append", default=[], help="extra argument passed to mihomo; repeatable")
@@ -236,6 +246,8 @@ def child_argv_from_args(args: argparse.Namespace, trojan_url_file: Path) -> lis
         child.extend(["--host-alias", value])
     for value in args.direct_host:
         child.extend(["--direct-host", value])
+    for value in args.exclude_dst_port:
+        child.extend(["--exlude-dst-port", str(value)])
     if args.allow_running:
         child.append("--allow-running")
     if args.no_flush_dns:
@@ -318,6 +330,7 @@ def run(args: argparse.Namespace, trojan_url: str) -> int:
         node_name=args.node_name,
         host_aliases=args.host_alias,
         direct_hosts=args.direct_host,
+        exclude_dst_ports=args.exclude_dst_port,
     )
     write_config(config_path, generated.content)
 

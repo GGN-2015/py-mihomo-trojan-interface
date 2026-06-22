@@ -34,6 +34,7 @@ class TrojanConfigTests(unittest.TestCase):
             node_name="",
             host_aliases=["alias.example.com"],
             direct_hosts=["*.example-direct.com", "198.51.100.7"],
+            exclude_dst_ports=[22, "12345", 22],
         )
 
         self.assertIn("mixed-port: 7890", content)
@@ -46,6 +47,8 @@ class TrojanConfigTests(unittest.TestCase):
         self.assertIn('sni: "edge.example.com"', content)
         self.assertIn("  - DOMAIN-SUFFIX,example-direct.com,DIRECT", content)
         self.assertIn("  - IP-CIDR,198.51.100.7/32,DIRECT,no-resolve", content)
+        self.assertEqual(content.count("  - DST-PORT,22,DIRECT"), 1)
+        self.assertIn("  - DST-PORT,12345,DIRECT", content)
         self.assertIn("  - IP-CIDR,203.0.113.10/32,DIRECT,no-resolve", content)
 
 

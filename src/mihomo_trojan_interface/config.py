@@ -122,6 +122,16 @@ def normalize_direct_host(value: str) -> str:
     return host.lower()
 
 
+def normalize_dst_port(value: int | str) -> int:
+    try:
+        port = int(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"destination port must be an integer: {value}") from exc
+    if not 1 <= port <= 65535:
+        raise ValueError(f"destination port must be between 1 and 65535: {value}")
+    return port
+
+
 def _ipv4_from_getaddrinfo(host: str) -> list[str]:
     try:
         infos = socket.getaddrinfo(host, None, socket.AF_INET, socket.SOCK_STREAM)
@@ -309,6 +319,7 @@ def build_yaml(
     node_name: str,
     host_aliases: list[str],
     direct_hosts: list[str],
+    exclude_dst_ports: list[int],
 ) -> str:
     pinned_ips = unique_preserve_order([*server_ips, connect_ip])
     server = connect_ip or (server_ips[0] if server_ips else node.host)
@@ -459,6 +470,9 @@ def build_yaml(
         else:
             lines.append(f"  - DOMAIN-SUFFIX,{direct_host},DIRECT")
 
+    for port in unique_preserve_order(str(normalize_dst_port(value)) for value in exclude_dst_ports):
+        lines.append(f"  - DST-PORT,{port},DIRECT")
+
     lines.extend(f"  - {rule}" for rule in DEFAULT_GOOGLE_RULES)
     lines.extend(
         [
@@ -494,6 +508,7 @@ def generate_config(
     node_name: str,
     host_aliases: list[str],
     direct_hosts: list[str],
+    exclude_dst_ports: list[int],
 ) -> ResolvedTrojanConfig:
     node = parse_trojan_link(link)
     auto_host_aliases = (
@@ -518,6 +533,7 @@ def generate_config(
         node_name=node_name,
         host_aliases=all_host_aliases,
         direct_hosts=direct_hosts,
+        exclude_dst_ports=exclude_dst_ports,
     )
 
     return ResolvedTrojanConfig(
